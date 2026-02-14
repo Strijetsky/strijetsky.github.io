@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <link rel="icon" href="https://img.icons8.com/?size=100&id=fS2gQg2rrN9C&format=png&color=000000" type="image/png">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <title>Люблю Алину!</title>
+  <style>
+    :root {
+      --bg: #fff9fb;
+      --accent: #ff5fa2;
+      --accent2: #ff2f86;
+      --text: #3a2a35;
+      --card-bg: rgba(255,255,255,.92);
+      --card-shadow: 0 8px 35px rgba(0,0,0,.06), 0 1px 3px rgba(0,0,0,.04);
+      --card-radius: 20px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; }
+    body {
+      font-family: 'Nunito', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      overflow: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ══════════════════════════════════════
+       Falling Hearts Background
+       ══════════════════════════════════════ */
+    .hearts-bg {
+      position: fixed; inset: 0;
+      pointer-events: none; z-index: 0; overflow: hidden;
+    }
+    .hearts-bg .h {
+      position: absolute;
+      bottom: -40px;
+      opacity: 0;
+      animation: floatH linear infinite;
+      will-change: transform, opacity;
+    }
+    @keyframes floatH {
+      0%   { transform: translateY(0) rotate(0deg) scale(1); opacity: 0; }
+      8%   { opacity: .55; }
+      50%  { transform: translateY(-55vh) rotate(20deg) scale(1.05); opacity: .5; }
+      92%  { opacity: .45; }
+      100% { transform: translateY(-115vh) rotate(40deg) scale(.9); opacity: 0; }
+    }
+
+    /* ══════════════════════════════════════
+       Page System
+       ══════════════════════════════════════ */
+    .page {
+      position: fixed; inset: 0;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 28px 20px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .55s ease, transform .55s ease;
+      transform: scale(.97) translateY(12px);
+      z-index: 1;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    .page.active {
+      opacity: 1;
+      pointer-events: auto;
+      transform: scale(1) translateY(0);
+    }
+    .page-inner {
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      width: 100%;
+      max-width: 520px;
+      gap: 8px;
+    }
+
+    /* ══════════════════════════════════════
+       Buttons
+       ══════════════════════════════════════ */
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      padding: 15px 36px;
+      border-radius: 999px; border: 0;
+      font-family: inherit; font-weight: 700; font-size: 16px;
+      cursor: pointer;
+      transition: transform .15s ease, box-shadow .15s ease, filter .15s ease;
+      box-shadow: 0 8px 26px rgba(0,0,0,.09);
+      user-select: none; touch-action: manipulation;
+      text-decoration: none;
+    }
+    .btn:active { transform: scale(.95) !important; }
+    .btn-primary {
+      background: linear-gradient(180deg, var(--accent), var(--accent2));
+      color: #fff;
+    }
+    .btn-primary:hover { filter: brightness(1.06); transform: translateY(-1px); }
+
+    /* ══════════════════════════════════════
+       Page 1: Welcome
+       ══════════════════════════════════════ */
+    .welcome-card {
+      background: var(--card-bg);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-radius: var(--card-radius);
+      padding: 40px 30px 36px;
+      box-shadow: var(--card-shadow);
+      text-align: center;
+      max-width: min(440px, 90vw);
+      width: 100%;
+    }
+    .welcome-title {
+      font-size: clamp(26px, 5.5vw, 36px);
+      font-weight: 800;
+      color: var(--accent2);
+      line-height: 1.2;
+      margin-bottom: 10px;
+    }
+    .welcome-sub {
+      font-size: clamp(15px, 3.5vw, 18px);
+      font-weight: 600;
+      color: var(--text);
+      line-height: 1.5;
+      margin-bottom: 6px;
+    }
+    .welcome-hint {
+      font-size: 14px;
+      color: #9a8a95;
+      font-weight: 600;
+      margin-bottom: 20px;
+    }
+
+    /* ══════════════════════════════════════
+       Page 2: Reasons Why I Love You
+       ══════════════════════════════════════ */
+    .reasons-title {
+      font-size: clamp(22px, 5vw, 30px);
+      font-weight: 800;
+      text-align: center;
+      color: var(--accent2);
+      line-height: 1.2;
+      margin-bottom: 4px;
+    }
+    .reasons-subtitle {
+      font-size: 14px;
+      color: #9a8a95;
+      font-weight: 600;
+      margin-bottom: 16px;
+      text-align: center;
+    }
+    .reasons-list {
+      width: 100%;
+      max-width: min(440px, 90vw);
+      display: flex; flex-direction: column;
+      gap: 10px;
+    }
+    .reason-item {
+      background: var(--card-bg);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-radius: 14px;
+      padding: 14px 18px;
+      box-shadow: 0 4px 18px rgba(0,0,0,.05);
+      cursor: pointer;
+      transition: transform .2s ease, box-shadow .2s ease;
+      user-select: none;
+      overflow: hidden;
+    }
+    .reason-item:hover { transform: translateY(-1px); box-shadow: 0 6px 24px rgba(0,0,0,.08); }
+    .reason-item:active { transform: scale(.98); }
+    .reason-header {
+      display: flex; align-items: center; gap: 10px;
+    }
+    .reason-heart {
+      font-size: 20px;
+      transition: transform .3s ease;
+      flex-shrink: 0;
+    }
+    .reason-item.open .reason-heart {
+      transform: scale(1.2);
+    }
+    .reason-heart-empty { opacity: .45; }
+    .reason-item.open .reason-heart-empty { opacity: 1; }
+    .reason-name {
+      font-weight: 700;
+      font-size: 15px;
+      color: var(--text);
+    }
+    .reason-desc {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height .4s ease, opacity .3s ease, margin .3s ease;
+      opacity: 0;
+      font-size: 13.5px;
+      color: #7a6a75;
+      line-height: 1.5;
+      margin-top: 0;
+      padding-left: 30px;
+    }
+    .reason-item.open .reason-desc {
+      max-height: 80px;
+      opacity: 1;
+      margin-top: 8px;
+    }
+    .reasons-next {
+      margin-top: 18px;
+    }
+
+    /* ══════════════════════════════════════
+       Page 3: Memory Game
+       ══════════════════════════════════════ */
+    .game-title {
+      font-size: clamp(20px, 4.5vw, 28px);
+      font-weight: 800;
+      text-align: center;
+      color: var(--accent2);
+      line-height: 1.25;
+      margin-bottom: 2px;
+    }
+    .game-subtitle {
+      font-size: 14px;
+      color: #9a8a95;
+      font-weight: 600;
+      margin-bottom: 14px;
+      text-align: center;
+    }
+    .game-moves {
+      display: inline-flex; align-items: center;
+      gap: 6px;
+      background: var(--card-bg);
+      border-radius: 999px;
+      padding: 8px 20px;
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--accent);
+      box-shadow: 0 4px 16px rgba(0,0,0,.05);
+      margin-bottom: 16px;
+    }
+    .game-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      width: 100%;
+      max-width: min(360px, 85vw);
+    }
+    .game-card {
+      aspect-ratio: 1;
+      perspective: 600px;
+      cursor: pointer;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .game-card-inner {
+      position: relative;
+      width: 100%; height: 100%;
+      transition: transform .5s ease;
+      transform-style: preserve-3d;
+      border-radius: 12px;
+    }
+    .game-card.flipped .game-card-inner {
+      transform: rotateY(180deg);
+    }
+    .game-card.matched .game-card-inner {
+      transform: rotateY(180deg);
+    }
+    .game-card-front, .game-card-back {
+      position: absolute; inset: 0;
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+    }
+    .game-card-front {
+      background: var(--card-bg);
+      box-shadow: 0 4px 16px rgba(0,0,0,.06);
+      font-size: 22px;
+      color: #d4b8c7;
+    }
+    .game-card-back {
+      background: linear-gradient(145deg, #ffe0ec, #ffd1e3);
+      box-shadow: 0 4px 20px rgba(255,95,162,.15);
+      transform: rotateY(180deg);
+      font-size: clamp(22px, 6vw, 32px);
+    }
+    .game-card.matched .game-card-back {
+      background: linear-gradient(145deg, #e8ffe0, #d4f5c8);
+      box-shadow: 0 4px 20px rgba(100,200,80,.15);
+    }
+    .game-complete-msg {
+      display: none;
+      text-align: center;
+      margin-top: 18px;
+      font-weight: 700;
+      font-size: 16px;
+      color: var(--accent);
+      animation: fadeInUp .5s ease;
+    }
+    .game-complete-msg.show { display: block; }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+
+    /* ══════════════════════════════════════
+       Page 5: Final
+       ══════════════════════════════════════ */
+    .final-heart {
+      font-size: 48px;
+      margin-bottom: 10px;
+      animation: heartPulse 1.5s ease-in-out infinite;
+    }
+    @keyframes heartPulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.15); }
+    }
+    .final-title {
+      font-size: clamp(24px, 5.5vw, 34px);
+      font-weight: 800;
+      text-align: center;
+      color: var(--accent2);
+      line-height: 1.25;
+      margin-bottom: 8px;
+    }
+    .final-message {
+      background: var(--card-bg);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-radius: 18px;
+      padding: 26px 22px;
+      box-shadow: var(--card-shadow);
+      max-width: min(460px, 92vw);
+      width: 100%;
+      font-size: 15px;
+      line-height: 1.75;
+      text-align: center;
+      color: #4a3a45;
+      margin-bottom: 10px;
+    }
+    .final-kaomoji {
+      font-size: 20px;
+      font-weight: 700;
+      opacity: .65;
+      margin-top: 4px;
+    }
+
+    /* ══════════════════════════════════════
+       Responsive
+       ══════════════════════════════════════ */
+    @media (max-width: 400px) {
+      .btn { padding: 13px 28px; font-size: 15px; }
+      .game-grid { gap: 8px; }
+      .memories-grid { gap: 12px; }
+      .memory-frame { padding: 8px 8px 22px; }
+    }
+    @media (max-width: 360px) {
+      .memories-grid { grid-template-columns: 1fr; max-width: 220px; }
+    }
+    @media (max-height: 680px) {
+      .page { padding: 16px 16px; }
+      .welcome-card { padding: 28px 22px 24px; }
+      .reasons-list { gap: 8px; }
+    }
+
+    /* scrollable pages when content overflows */
+    .page.scrollable {
+      justify-content: flex-start;
+      padding-top: 40px;
+      padding-bottom: 40px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ═══ Floating Hearts Background ═══ -->
+  <div class="hearts-bg" id="heartsBg"></div>
+
+  <!-- ═══ Page 1: Welcome ═══ -->
+  <section class="page active" id="page1">
+    <div class="page-inner">
+      <div class="welcome-card">
+        <h1 class="welcome-title">Привет, котик!</h1>
+        <p class="welcome-sub">Тебе тут валентиночка..</p>
+        <p class="welcome-hint">Пройди мини-игру, чтобы открыть свои сюрпризы</p>
+        <button class="btn btn-primary" data-goto="2">Начать игру →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ Page 2: Reasons Why I Love You ═══ -->
+  <section class="page scrollable" id="page2">
+    <div class="page-inner">
+      <h2 class="reasons-title">Почему я тебя люблю</h2>
+      <p class="reasons-subtitle">Нажми на каждое сердечко, чтобы раскрыть причину</p>
+      <div class="reasons-list" id="reasonsList">
+        <div class="reason-item" data-reason>
+          <div class="reason-header">
+            <span class="reason-heart reason-heart-empty">🤍</span>
+            <span class="reason-name">Твоя забота</span>
+          </div>
+          <div class="reason-desc">Ты умеешь делать так, чтобы рядом всегда было тепло и спокойно</div>
+        </div>
+        <div class="reason-item" data-reason>
+          <div class="reason-header">
+            <span class="reason-heart reason-heart-empty">🤍</span>
+            <span class="reason-name">Твоя улыбка</span>
+          </div>
+          <div class="reason-desc">Она способна порадовать даже в самый тяжёлый день</div>
+        </div>
+        <div class="reason-item" data-reason>
+          <div class="reason-header">
+            <span class="reason-heart reason-heart-empty">🤍</span>
+            <span class="reason-name">Твоя поддержка</span>
+          </div>
+          <div class="reason-desc">Ты веришь в меня, даже когда я сам сомневаюсь</div>
+        </div>
+        <div class="reason-item" data-reason>
+          <div class="reason-header">
+            <span class="reason-heart reason-heart-empty">🤍</span>
+            <span class="reason-name">Твоя красота</span>
+          </div>
+          <div class="reason-desc">Ты прекрасна во всём</div>
+        </div>
+        <div class="reason-item" data-reason>
+          <div class="reason-header">
+            <span class="reason-heart reason-heart-empty">🤍</span>
+            <span class="reason-name">Твоя энергия</span>
+          </div>
+          <div class="reason-desc">Ты вдохновляешь меня становиться лучше каждый день</div>
+        </div>
+        <div class="reason-item" data-reason>
+          <div class="reason-header">
+            <span class="reason-heart reason-heart-empty">🤍</span>
+            <span class="reason-name">Наше будущее</span>
+          </div>
+          <div class="reason-desc">Я хочу провести его с тобой</div>
+        </div>
+      </div>
+      <button class="btn btn-primary reasons-next" data-goto="3">Далее →</button>
+    </div>
+  </section>
+
+  <!-- ═══ Page 3: Memory Game ═══ -->
+  <section class="page" id="page3">
+    <div class="page-inner">
+      <h2 class="game-title">Давай сыграем<br>перед сюрпризом</h2>
+      <p class="game-subtitle">Найди все пары!</p>
+      <div class="game-moves">Ходы: <span id="moveCount">0</span></div>
+      <div class="game-grid" id="gameGrid"></div>
+      <div class="game-complete-msg" id="gameComplete">
+        Молодец! 🎉 Все пары найдены!
+      </div>
+    </div>
+  </section>
+
+  
+
+  <!-- ═══ Page 5: Final ═══ -->
+  <section class="page" id="page4">
+    <div class="page-inner">
+      <div class="final-heart">❤️</div>
+      <h1 class="final-title">С Днём Святого<br>Валентина!</h1>
+      <div class="final-message">
+        <p>Ты — самое тёплое, что есть в моей жизни.  
+        Спасибо тебе за нежность, улыбки и моменты,  
+        которые делают каждый день особенным. <br>
+    Я люблю тебя сильнее, чем могу выразить словами.  
+        Пусть этот день напомнит тебе, какая ты невероятная. Ты — моё сердце.</p>
+        <br>
+        <p>Я тебя очень люблю! 💕</p>
+      </div>
+      <div class="final-kaomoji">(ꈍᴗꈍ)♡</div>
+    </div>
+  </section>
+
+  <script>
+    /* ══════════════════════════════════════
+       Floating Hearts
+       ══════════════════════════════════════ */
+    (function() {
+      var c = document.getElementById('heartsBg');
+      var emojis = ['💖','💗','💕','💓','💝','💞'];
+      var count = 28;
+      for (var i = 0; i < count; i++) {
+        var el = document.createElement('div');
+        el.className = 'h';
+        el.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+        el.style.left = (Math.random() * 100) + '%';
+        el.style.fontSize = (Math.random() * 14 + 11) + 'px';
+        var dur = Math.random() * 10 + 9;
+        el.style.animationDuration = dur + 's';
+        el.style.animationDelay = (Math.random() * dur) + 's';
+        c.appendChild(el);
+      }
+    })();
+
+    /* ══════════════════════════════════════
+       Page Navigation
+       ══════════════════════════════════════ */
+    var currentPage = 1;
+
+    function goToPage(target) {
+      if (target === currentPage) return;
+      var curEl = document.getElementById('page' + currentPage);
+      var nextEl = document.getElementById('page' + target);
+      if (!curEl || !nextEl) return;
+      curEl.classList.remove('active');
+      void nextEl.offsetWidth;
+      nextEl.classList.add('active');
+      currentPage = target;
+      nextEl.scrollTop = 0;
+    }
+
+    document.addEventListener('click', function(e) {
+      var btn = e.target.closest('[data-goto]');
+      if (!btn) return;
+      var target = parseInt(btn.getAttribute('data-goto'), 10);
+      if (!isNaN(target)) goToPage(target);
+    });
+
+    /* ══════════════════════════════════════
+       Reasons Toggle
+       ══════════════════════════════════════ */
+    document.getElementById('reasonsList').addEventListener('click', function(e) {
+      var item = e.target.closest('[data-reason]');
+      if (!item) return;
+      var wasOpen = item.classList.contains('open');
+      item.classList.toggle('open');
+      var heart = item.querySelector('.reason-heart');
+      if (heart) {
+        if (!wasOpen) {
+          heart.textContent = '💖';
+          heart.classList.remove('reason-heart-empty');
+        }
+      }
+    });
+
+    /* ══════════════════════════════════════
+       Memory Matching Game
+       ══════════════════════════════════════ */
+    (function() {
+      var pairs = ['💖','💕','🌹','💌','🧸','🎀'];
+      var cards = pairs.concat(pairs);
+      var grid = document.getElementById('gameGrid');
+      var moveCountEl = document.getElementById('moveCount');
+      var completeEl = document.getElementById('gameComplete');
+
+      var moves = 0;
+      var firstCard = null;
+      var secondCard = null;
+      var lockBoard = false;
+      var matchedPairs = 0;
+
+      // Fisher-Yates shuffle
+      function shuffle(arr) {
+        for (var i = arr.length - 1; i > 0; i--) {
+          var j = Math.floor(Math.random() * (i + 1));
+          var temp = arr[i];
+          arr[i] = arr[j];
+          arr[j] = temp;
+        }
+        return arr;
+      }
+
+      shuffle(cards);
+
+      // Build grid
+      for (var i = 0; i < cards.length; i++) {
+        var card = document.createElement('div');
+        card.className = 'game-card';
+        card.setAttribute('data-emoji', cards[i]);
+        card.innerHTML =
+          '<div class="game-card-inner">' +
+            '<div class="game-card-front">?</div>' +
+            '<div class="game-card-back">' + cards[i] + '</div>' +
+          '</div>';
+        grid.appendChild(card);
+      }
+
+      grid.addEventListener('click', function(e) {
+        if (lockBoard) return;
+        var card = e.target.closest('.game-card');
+        if (!card) return;
+        if (card.classList.contains('flipped') || card.classList.contains('matched')) return;
+        if (card === firstCard) return;
+
+        card.classList.add('flipped');
+
+        if (!firstCard) {
+          firstCard = card;
+          return;
+        }
+
+        secondCard = card;
+        moves++;
+        moveCountEl.textContent = moves;
+        lockBoard = true;
+
+        var emoji1 = firstCard.getAttribute('data-emoji');
+        var emoji2 = secondCard.getAttribute('data-emoji');
+
+        if (emoji1 === emoji2) {
+          firstCard.classList.add('matched');
+          secondCard.classList.add('matched');
+          matchedPairs++;
+          resetTurn();
+
+          if (matchedPairs === pairs.length) {
+            completeEl.classList.add('show');
+            setTimeout(function() {
+              goToPage(4);
+            }, 1800);
+          }
+        } else {
+          setTimeout(function() {
+            firstCard.classList.remove('flipped');
+            secondCard.classList.remove('flipped');
+            resetTurn();
+          }, 800);
+        }
+      });
+
+      function resetTurn() {
+        firstCard = null;
+        secondCard = null;
+        lockBoard = false;
+      }
+    })();
+  </script>
+</body>
+</html>
